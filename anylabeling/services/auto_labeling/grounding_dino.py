@@ -48,7 +48,7 @@ class Grounding_DINO(Model):
     def __init__(self, model_config, on_message) -> None:
         # Run the parent class's init method
         super().__init__(model_config, on_message)
-
+        print(model_config)
         model_type = self.config["model_type"]
         model_abs_path = self.get_model_abs_path(self.config, "model_path")
         if not model_abs_path or not os.path.isfile(model_abs_path):

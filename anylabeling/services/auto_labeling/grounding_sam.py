@@ -550,7 +550,6 @@ class GroundingSAM(Model):
         """
         Predict shapes from image
         """
-
         if image is None:
             return []
 

@@ -116,7 +116,6 @@ class ModelManager(QObject):
             auto_labeling_configs, "models.yaml"
         ) as f:
             model_list = yaml.safe_load(f)
-
         # Load list of custom models
         custom_models = get_config().get("custom_models", [])
         for custom_model in custom_models:
@@ -169,6 +168,7 @@ class ModelManager(QObject):
         model_configs.sort(key=lambda x: x.get("last_used", 0), reverse=True)
 
         self.model_configs = model_configs
+
         self.model_configs_changed.emit(model_configs)
 
     def get_model_configs(self):
@@ -361,6 +361,7 @@ class ModelManager(QObject):
             self.auto_segmentation_model_unselected.emit()
 
         model_config = copy.deepcopy(self.model_configs[model_id])
+        print(model_config)
         if model_config["type"] == "yolov5":
             from .yolov5 import YOLOv5
 
@@ -1813,6 +1814,7 @@ class ModelManager(QObject):
             raise Exception(f"Unknown model type: {model_config['type']}")
 
         self.loaded_model_config = model_config
+
         return self.loaded_model_config
 
     def set_cache_auto_label(self, text, gid):
@@ -2055,6 +2057,7 @@ class ModelManager(QObject):
     def predict_shapes_threading(
         self, image, filename=None, text_prompt=None, run_tracker=False
     ):
+
         """Predict shapes.
         This function starts a thread to run the prediction.
         """

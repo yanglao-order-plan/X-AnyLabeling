@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 
-
+# qt线程类，用于消息回显
 class GenericWorker(QObject):
     finished = pyqtSignal()
 

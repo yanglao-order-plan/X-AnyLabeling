@@ -73,7 +73,6 @@ def get_config(
     # 2. Load configuration from file or YAML string
     if not config_file_or_yaml:
         config_file_or_yaml = current_config_file
-
     config_from_yaml = yaml.safe_load(config_file_or_yaml)
     if not isinstance(config_from_yaml, dict):
         with open(config_file_or_yaml, encoding="utf-8") as f:

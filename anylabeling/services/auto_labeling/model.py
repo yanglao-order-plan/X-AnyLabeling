@@ -32,7 +32,7 @@ class Model(QObject):
     BASE_DOWNLOAD_URL = (
         "https://github.com/CVHub520/X-AnyLabeling/releases/tag"
     )
-
+    home_dir = os.path.expanduser("E:\models\yanglao")
     class Meta(QObject):
         required_config_names = []
         widgets = ["button_run"]
@@ -103,11 +103,12 @@ class Model(QObject):
         """
         # Try getting model path from config folder
         model_path = model_config[model_path_field_name]
-
+        local = model_path.get("local", None)
+        online = model_path.get("online", None)
         # Model path is a local path
-        if not model_path.startswith(("http://", "https://")):
+        if local is not None:
             # Relative path to executable or absolute path?
-            model_abs_path = os.path.abspath(model_path)
+            model_abs_path = os.path.abspath(local)
             if os.path.exists(model_abs_path):
                 return model_abs_path
 
@@ -115,42 +116,35 @@ class Model(QObject):
             config_file_path = model_config["config_file"]
             config_folder = os.path.dirname(config_file_path)
             model_abs_path = os.path.abspath(
-                os.path.join(config_folder, model_path)
+                os.path.join(config_folder, local)
             )
+            print(model_abs_path)
             if os.path.exists(model_abs_path):
                 return model_abs_path
 
-            raise QCoreApplication.translate(
-                "Model", "Model path not found: {model_path}"
-            ).format(model_path=model_path)
+            self.on_message("Model path not found: {model_path}".format(model_path=local))
 
         # Download model from url
-        self.on_message(
-            QCoreApplication.translate(
-                "Model", "Downloading model from registry..."
-            )
-        )
+        self.on_message("Downloading model from registry...")
 
         # Build download url
         def get_filename_from_url(url):
             a = urlparse(url)
             return os.path.basename(a.path)
 
-        filename = get_filename_from_url(model_path)
-        download_url = model_path
+        filename = get_filename_from_url(online)
+        download_url = online
 
         # Continue with the rest of your function logic
         migrate_flag = self.allow_migrate_data()
-        home_dir = os.path.expanduser("~")
         data_dir = "xanylabeling_data" if migrate_flag else "anylabeling_data"
 
         # Create model folder
-        home_dir = os.path.expanduser("~")
-        model_path = os.path.abspath(os.path.join(home_dir, data_dir))
+        model_path = os.path.abspath(os.path.join(self.home_dir, data_dir))
         model_abs_path = os.path.abspath(
             os.path.join(
                 model_path,
-                "models",
+                "flows",
                 model_config["name"],
                 filename,
             )
@@ -176,7 +170,7 @@ class Model(QObject):
         ellipsis_download_url = download_url
         if len(download_url) > 40:
             ellipsis_download_url = (
-                download_url[:20] + "..." + download_url[-20:]
+                    download_url[:20] + "..." + download_url[-20:]
             )
         logger.info(f"Downloading {ellipsis_download_url} to {model_abs_path}")
         try:
@@ -184,9 +178,7 @@ class Model(QObject):
             def _progress(count, block_size, total_size):
                 percent = int(count * block_size * 100 / total_size)
                 self.on_message(
-                    QCoreApplication.translate(
-                        "Model", "Downloading {download_url}: {percent}%"
-                    ).format(
+                    "Downloading {download_url}: {percent}%".format(
                         download_url=ellipsis_download_url, percent=percent
                     )
                 )
@@ -224,7 +216,7 @@ class Model(QObject):
         raise NotImplementedError
 
     @staticmethod
-    def load_image_from_filename(filename):
+    def load_image_from_filename(filename):  #确保转成标准类型
         """Load image from labeling file and return image data and image path."""
         label_file = os.path.splitext(filename)[0] + ".json"
         if QFile.exists(label_file) and LabelFile.is_label_file(label_file):

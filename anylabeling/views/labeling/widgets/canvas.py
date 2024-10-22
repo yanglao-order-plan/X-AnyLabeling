@@ -993,14 +993,13 @@ class Canvas(
             self.bounded_move_shapes(shapes, point + offset)
 
     # QT Overload
-    def paintEvent(self, event):  # noqa: C901
+    def paintEvent(self, image):  # noqa: C901
         """Paint event for canvas"""
         if (
             self.pixmap is None
             or self.pixmap.width() == 0
             or self.pixmap.height() == 0
         ):
-            super().paintEvent(event)
             return
 
         p = self._painter

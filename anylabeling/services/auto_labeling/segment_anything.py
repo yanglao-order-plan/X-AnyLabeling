@@ -124,6 +124,8 @@ class SegmentAnything(Model):
 
     def set_auto_labeling_marks(self, marks):
         """Set auto labeling marks"""
+        for mark in self.marks:
+            print(mark)
         self.marks = marks
 
     def post_process(self, masks, image=None):
@@ -245,7 +247,7 @@ class SegmentAnything(Model):
         """
         if image is None or not self.marks:
             return AutoLabelingResult([], replace=False)
-
+        print(self.marks)
         shapes = []
         cv_image = qt_img_to_rgb_cv_img(image, filename)
         try:

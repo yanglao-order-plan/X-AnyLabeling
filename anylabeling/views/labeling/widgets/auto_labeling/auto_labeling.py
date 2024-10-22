@@ -135,7 +135,7 @@ class AutoLabelingWidget(QWidget):
 
     def update_model_configs(self, model_list):
         """Update model list"""
-        # Add models to combobox
+        # Add models to combobo
         self.model_select_combobox.clear()
         self.model_select_combobox.addItem(self.tr("No Model"), userData=None)
         self.model_select_combobox.addItem(
@@ -330,6 +330,7 @@ class AutoLabelingWidget(QWidget):
         for widget in widgets:
             getattr(self, widget).hide()
 
+    # 参数重新设置区域
     def on_new_marks(self, marks):
         """Handle new marks"""
         self.model_manager.set_auto_labeling_marks(marks)

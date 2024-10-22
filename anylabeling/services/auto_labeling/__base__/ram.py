@@ -33,6 +33,7 @@ class RecognizeAnything(Model):
         super().__init__(model_config, on_message)
         model_name = self.config["type"]
         model_abs_path = self.get_model_abs_path(self.config, "model_path")
+        print(model_abs_path)
         if not model_abs_path or not os.path.isfile(model_abs_path):
             raise FileNotFoundError(
                 QCoreApplication.translate(
@@ -67,7 +68,7 @@ class RecognizeAnything(Model):
         """
         h, w = input_shape
         image = cv2.resize(input_image, (w, h))
-        image /= 255.0
+        image = image / 255.0
         mean = np.array([0.485, 0.456, 0.406])
         std = np.array([0.229, 0.224, 0.225])
         image = (image - mean) / std
